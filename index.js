@@ -2,12 +2,18 @@ let images = document.querySelector(".images");
 let lists = document.querySelector(".lists");
 let select = document.querySelector('#select');
 let submitBtn = document.querySelector(".submitBtn");
+let startPage = document.querySelector("#startpage");
+let userInput;
 let dataInfo;
 let coverImages = 5;
+
 let urlImg = "https://dog.ceo/api/breeds/image/random/" + coverImages;
 let urlList = "https://dog.ceo/api/breeds/list/all";
+let customUrl;
+    
 
-frontPage();
+
+
 
 function frontPage(){
     getData(urlImg)
@@ -27,6 +33,7 @@ function getData(url){
 }
 
 
+
 function renderImage(data){
 
     for (let i=0; i < coverImages; i++){
@@ -43,32 +50,75 @@ function renderImage(data){
 
 function renderInfo(datas){
     let info = datas;
-    /*console.log(info);
-    let ulList = document.createElement("ul");
-    lists.appendChild(ulList);
-    for (let data in info){
-        //let data = info[j];
-        console.log(data);
-        let listLi = document.createElement("li");
-        let lista = document.createElement("a");
-        lista.textContent = data;
-        
-        ulList.appendChild(listLi);
-        listLi.appendChild(lista);
-   }*/
 
     for (let data in info) {  
         select.innerHTML += '<option value="'+data+'">' + data+'</option>';
 
     }
 
-    submitBtn.addEventListener("click", chooseBreed);
+    submitBtn.addEventListener("click", mySubmitBtn);
+}
 
 
+function mySubmitBtn(){
+    chooseBreed();
+    reloadPageWithHash();
+    customDogPage()
 }
 
 function chooseBreed(){
 
-   let userInput = select.value;
+   userInput = select.value;
    console.log(userInput);
+
 }
+
+function reloadPageWithHash() {
+    window.location.hash = userInput;
+} 
+
+function customDogPage(){
+    customUrl = "https://dog.ceo/api/breed/"+userInput+"/images/random/3";
+    getData(customUrl)
+    .then(renderBreedPage);
+}
+
+function renderBreedPage(dataImage){
+
+    startPage.style.display = "none";
+    let indivPage = document.querySelector("#individual-page");
+    indivPage.style.display = "flex";
+    let imagesDiv = document.createElement("div");
+    imagesDiv.className = "indivImages";
+    indivPage.appendChild(imagesDiv)
+    let imagesText = document.createElement("div");
+    imagesText.className = "indivLists";
+    indivPage.appendChild(imagesText)
+    let eachH2 = document.createElement("h2");
+    eachH2.textContent = userInput;
+    imagesText.appendChild(eachH2);
+
+    for (let j=0; j < dataImage.length; j++){
+
+        let imageDiv = document.createElement("div");
+        let eachImg = document.createElement("img");
+
+        imageDiv.className = "indivImage";
+        imagesDiv.appendChild(imageDiv)
+        
+        eachImg.src = dataImage[j];
+        imageDiv.appendChild(eachImg);
+
+    }
+
+}
+
+userInput = window.location.hash;
+if (userInput) {
+    userInput = userInput.substring(1);
+    customDogPage();
+
+} else {
+  frontPage();
+}
+
