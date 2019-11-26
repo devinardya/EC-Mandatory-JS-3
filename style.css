@@ -49,7 +49,7 @@ section{
     margin: auto;
 }
 
-#startpage, #individual-page{
+#startpage, #breed-page, #subbreed-page{
     height: 100%;
     width: 100%;
     display: flex;
@@ -62,11 +62,11 @@ section{
     background: linear-gradient(180deg, rgba(255,228,196,1) 0%, rgba(255,228,196,1) 26%, rgba(95,158,160,1) 26%, rgba(95,158,160,1) 100%);
 }
 
-#individual-page{
+#breed-page, #subbreed-page{
     display: none;
 }
 
-.images, .indivImages{
+.images{
     width: 90%;
     height: 50%;
     display: flex;
@@ -75,7 +75,7 @@ section{
     justify-content: center;
 }
 
-.image, .indivImage{
+.image{
     height: 56%;
     margin-left: -80px;
     display: flex;
@@ -84,11 +84,11 @@ section{
     flex-shrink: 1;
 }
 
-.image:first-child, .indivImage:first-child{
+.image:first-child{
     margin-left: 0px;
 }
 
-.image img, .indivImage img{
+.image img{
     width: 200px;
     height: 200px;
     object-fit: cover;
@@ -99,14 +99,20 @@ section{
     border: 2px dotted #fff;
 }
 
-.image:last-child, .indivImage:last-child{
+.image:last-child{
     margin-right: 0px;
 }
 
-.indivLists h2{
+#startpage .lists h2{
+    margin-top: 30px;
+}
+
+#breed-page .lists h2, #subbreed-page .lists h2{
     color: #fff;
     font-size: 35px;
-    margin-top: 40px;
+    margin-top: 0px;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 20px;
 }
 
 footer{
@@ -123,7 +129,7 @@ footer{
     font-size: 10px;
 }
 
-.lists, .indivLists{
+.lists{
     width: 100%;
     height: 50%;
     display: flex;
@@ -133,10 +139,9 @@ footer{
     text-align: center;
 }
 
-.lists h2, .indivLists h3{
+.lists h2, .lists h3{
     font-size: 20px;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-bottom: 10px;
     font-family: 'Lato', sans-serif;
     text-transform: uppercase;
     color: darkslategray;
@@ -150,14 +155,15 @@ footer{
     height: 34px;
 }
 
+
 .submitBtn{
-    margin-top: 30px;
+    margin-top: 10px;
     text-align: center;
     padding: 5px;
     padding-top: 5px;
     vertical-align: middle;
     width: 180px;
-    height: 45px;
+    height: 40px;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -165,7 +171,7 @@ footer{
     align-self: center;
     border-radius: 50px;
     border: 1px solid #fff;
-    color: darkslategray;
+    color: #fff;
 }
 
 .submitBtn:hover{
