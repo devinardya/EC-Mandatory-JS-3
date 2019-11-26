@@ -75,16 +75,16 @@ section{
 }
 
 .image, .indivImage{
-    width: calc(20% - 10px);
     height: 56%;
     margin-left: -80px;
     display: flex;
     flex-flow: row wrap;
     align-content: center;
+    flex-shrink: 1;
 }
 
 .image:first-child, .indivImage:first-child{
-    margin-left: 20px;
+    margin-left: 0px;
 }
 
 .image img, .indivImage img{
@@ -105,6 +105,7 @@ section{
 .indivLists h2{
     color: #fff;
     font-size: 35px;
+    margin-top: 40px;
 }
 
 footer{
@@ -172,9 +173,35 @@ footer{
     border: none;
 }
 
-.material-icons.submit{
+.material-icons{
     position: relative;
     vertical-align: middle;
+}
+
+.material-icons.submit{
     top: -1px;
     margin-right: 0px;
 }
+
+.refreshPage{
+    background: transparent;
+    border: none;
+    color: #fff;
+    margin-top: 20px;
+    width: 50px;
+    align-self: center;
+    text-align: center;
+    padding: 0;
+}
+
+.refreshPage:hover{
+    cursor: pointer;
+    color: bisque;
+}
+
+.material-icons.refresh{
+    font-size: 30px;
+    left: 0px;
+}
+
+

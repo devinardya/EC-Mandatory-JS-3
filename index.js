@@ -1,5 +1,4 @@
-let images = document.querySelector(".images");
-let lists = document.querySelector(".lists");
+
 let select = document.querySelector('#select');
 let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
@@ -36,6 +35,9 @@ function getData(url){
 
 function renderImage(data){
 
+    let images = document.querySelector(".images");
+
+
     for (let i=0; i < coverImages; i++){
 
         let imageDiv = document.createElement("div");
@@ -48,7 +50,22 @@ function renderImage(data){
     }
 }
 
+function createRefreshButton(){
+    let refreshBtn =  document.createElement("button");
+    refreshBtn.className = "refreshPage";
+    let btnSpan = document.createElement("span");
+    let iRefresh = document.createElement("i");
+    iRefresh.className ="material-icons refresh";
+    iRefresh.textContent = "refresh";
+    refreshBtn.appendChild(btnSpan);
+    refreshBtn.appendChild(iRefresh);
+    btnSpan.textContent = "REFRESH";
+
+    return refreshBtn;
+}
+
 function renderInfo(datas){
+    let lists = document.querySelector(".lists");
     let info = datas;
 
     for (let data in info) {  
@@ -57,6 +74,10 @@ function renderInfo(datas){
     }
 
     submitBtn.addEventListener("click", mySubmitBtn);
+    let refreshBtn = createRefreshButton();
+    lists.appendChild(refreshBtn);
+    refreshBtn.addEventListener("click", refreshPage);
+   
 }
 
 
@@ -75,6 +96,7 @@ function chooseBreed(){
 
 function reloadPageWithHash() {
     window.location.hash = userInput;
+    
 } 
 
 function customDogPage(){
@@ -95,8 +117,12 @@ function renderBreedPage(dataImage){
     imagesText.className = "indivLists";
     indivPage.appendChild(imagesText)
     let eachH2 = document.createElement("h2");
-    eachH2.textContent = userInput;
+    eachH2.textContent = userInput.toUpperCase();
     imagesText.appendChild(eachH2);
+
+    let refreshBtn = createRefreshButton();
+    imagesText.appendChild(refreshBtn);
+    refreshBtn.addEventListener("click", refreshSpecPage);
 
     for (let j=0; j < dataImage.length; j++){
 
@@ -113,12 +139,32 @@ function renderBreedPage(dataImage){
 
 }
 
-userInput = window.location.hash;
-if (userInput) {
-    userInput = userInput.substring(1);
-    customDogPage();
 
-} else {
-  frontPage();
+
+function refreshPage(){
+
+    window.location.href = window.location.pathname + window.location.search + window.location.hash;
+
 }
+
+function refreshSpecPage(){
+    userInput = window.location.hash;
+    if (userInput) {
+        userInput = userInput.substring(1);
+        customDogPage();
+    
+    } else {
+      frontPage();
+    } 
+    
+}
+
+refreshSpecPage();
+
+
+
+
+
+
+
 
