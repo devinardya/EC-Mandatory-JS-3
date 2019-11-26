@@ -1,5 +1,4 @@
 
-let select = document.querySelector('#select');
 let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
 let userInput;
@@ -20,6 +19,8 @@ function frontPage(){
 
     getData(urlList)
     .then(renderInfo)
+
+    startPage.style.display = "flex";
 }
 
 function getData(url){
@@ -57,8 +58,8 @@ function createRefreshButton(){
     let iRefresh = document.createElement("i");
     iRefresh.className ="material-icons refresh";
     iRefresh.textContent = "refresh";
-    refreshBtn.appendChild(btnSpan);
     refreshBtn.appendChild(iRefresh);
+    refreshBtn.appendChild(btnSpan);
     btnSpan.textContent = "REFRESH";
 
     return refreshBtn;
@@ -66,6 +67,7 @@ function createRefreshButton(){
 
 function renderInfo(datas){
     let lists = document.querySelector(".lists");
+    let select = document.querySelector('#select');
     let info = datas;
 
     for (let data in info) {  
@@ -77,14 +79,14 @@ function renderInfo(datas){
     let refreshBtn = createRefreshButton();
     lists.appendChild(refreshBtn);
     refreshBtn.addEventListener("click", refreshPage);
-   
+
 }
 
 
 function mySubmitBtn(){
     chooseBreed();
     reloadPageWithHash();
-    customDogPage()
+    customDogPage();
 }
 
 function chooseBreed(){
@@ -97,12 +99,13 @@ function chooseBreed(){
 function reloadPageWithHash() {
     window.location.hash = userInput;
     
-} 
+}
 
 function customDogPage(){
     customUrl = "https://dog.ceo/api/breed/"+userInput+"/images/random/3";
     getData(customUrl)
     .then(renderBreedPage);
+
 }
 
 function renderBreedPage(dataImage){
@@ -113,16 +116,8 @@ function renderBreedPage(dataImage){
     let imagesDiv = document.createElement("div");
     imagesDiv.className = "indivImages";
     indivPage.appendChild(imagesDiv)
-    let imagesText = document.createElement("div");
-    imagesText.className = "indivLists";
-    indivPage.appendChild(imagesText)
-    let eachH2 = document.createElement("h2");
-    eachH2.textContent = userInput.toUpperCase();
-    imagesText.appendChild(eachH2);
-
-    let refreshBtn = createRefreshButton();
-    imagesText.appendChild(refreshBtn);
-    refreshBtn.addEventListener("click", refreshSpecPage);
+   
+   
 
     for (let j=0; j < dataImage.length; j++){
 
@@ -134,16 +129,59 @@ function renderBreedPage(dataImage){
         
         eachImg.src = dataImage[j];
         imageDiv.appendChild(eachImg);
-
     }
+
+
+    customUrl = "https://dog.ceo/api/breed/"+userInput+"/list";
+    getData(customUrl)
+    .then(renderSubBreedList);
 
 }
 
+function renderSubBreedList(dataList){
 
+    let subBreedList = dataList;
+    console.log(subBreedList);
+
+    let indivPage = document.querySelector("#individual-page");
+    let imagesText = document.createElement("div");
+    imagesText.className = "indivLists";
+    indivPage.appendChild(imagesText);
+    imagesText.textContent = "";
+
+    let eachH2 = document.createElement("h2");
+    eachH2.textContent = userInput.toUpperCase();
+    imagesText.appendChild(eachH2);
+
+    if (subBreedList.length > 0){
+        let labelH3 = document.createElement("h3");
+        labelH3.textContent = "Choose the Sub-Breed";
+        imagesText.appendChild(labelH3);
+
+        let selectBox = document.createElement("select");
+        selectBox.id = "select-subbreed";
+        imagesText.appendChild(selectBox);
+    
+        for (let k= 0; k < subBreedList.length; k++) {  
+            data = subBreedList[k];
+            selectBox.innerHTML += '<option value="'+data+'">' + data+'</option>';
+        }
+    }
+
+    let refreshBtn = createRefreshButton();
+    imagesText.appendChild(refreshBtn);
+    refreshBtn.addEventListener("click", refreshPage);
+}
+
+function customSubBreedPage(){
+    customUrl = "https://dog.ceo/api/breed/"+userInput+"/list";
+    getData(customUrl)
+    .then(renderBreedPage);
+}
 
 function refreshPage(){
 
-    window.location.href = window.location.pathname + window.location.search + window.location.hash;
+    window.location.reload();
 
 }
 

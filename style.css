@@ -57,6 +57,7 @@ section{
     align-content: flex-start;
     justify-content: center;
     margin: auto;
+    display: none;
     background: rgb(255,228,196);
     background: linear-gradient(180deg, rgba(255,228,196,1) 0%, rgba(255,228,196,1) 26%, rgba(95,158,160,1) 26%, rgba(95,158,160,1) 100%);
 }
@@ -132,7 +133,7 @@ footer{
     text-align: center;
 }
 
-.lists h2{
+.lists h2, .indivLists h3{
     font-size: 20px;
     margin-bottom: 20px;
     margin-top: 20px;
@@ -141,7 +142,7 @@ footer{
     color: darkslategray;
 }
 
-.lists select{
+#select, #select-subbreed{
     width: 250px;
     padding: 5px 35px 5px 5px;
     font-size: 16px;
