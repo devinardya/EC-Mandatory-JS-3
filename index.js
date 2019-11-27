@@ -1,7 +1,10 @@
 let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
+
+
 let currentPage;
 let currentSubBreedPage;
+let userInput;
 let dataInfo;
 let coverImages = 5;
 let breedPage = false;
@@ -25,6 +28,11 @@ function getData(url) {
 function frontPage() {
     getData(urlImg)
         .then(renderImage)
+        .then(() => {
+            getData(urlList)
+            //.then(renderInfo)
+            .then(data => renderInfo(data));
+        })
 
     startPage.style.display = "flex";
 }
@@ -119,8 +127,6 @@ function renderImage(data) {
         images.appendChild(singleImageDiv);
     }
 
-    getData(urlList)
-    .then(renderInfo)
 }
 
 
@@ -164,6 +170,7 @@ function chooseBreed() {
         let subSelect = document.querySelector("#select-subbreed");
         currentSubBreedPage = subSelect.value;
         console.log(currentSubBreedPage);
+        console.log(userInput);
     }
 }
 
@@ -172,13 +179,22 @@ function customDogPage() {
     if (breedPage === false) {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/images/random/3";
         getData(customUrl)
-            .then(renderBreedPage)
-            .then(customSubBreedPage);
+            //.then(renderBreedPageImage) 
+            .then(data => renderImages(data, "#breed-page"))
+            //.then(customSubBreedPage);
+            .then(() => {
+                customUrl = "https://dog.ceo/api/breed/" + currentPage + "/list";
+                getData(customUrl)
+                    .then(data => renderLists(data, "#breed-page"));
+            })
     }
     if (breedPage === true) {
+
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/" + currentSubBreedPage + "/images/random/3";
         getData(customUrl)
-            .then(renderSubBreedPage);
+            //.then(renderSubBreedPage);
+            .then(data => renderImages(data, "#subbreed-page"))
+            .then(data => renderLists(data, "#subbreed-page"))
     }
 }
 
@@ -194,12 +210,27 @@ function reloadPageWithHash() {
 
 }
 
-// rendering breed page (images)
-function renderBreedPage(dataImage) {
+function renderImages(dataImage, breedId){
+    
+    let indivPage = document.querySelector(breedId);
 
-    startPage.style.display = "none";
-    let indivPage = document.querySelector("#breed-page");
-    indivPage.style.display = "flex";
+    if (breedId === "#breed-page"){
+            const title = document.querySelector("title");
+            title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+        
+            startPage.style.display = "none";
+            //let indivPage = document.querySelector("#breed-page");
+            indivPage.style.display = "flex";
+        
+    }
+
+    if (breedId === "#subbreed-page"){
+
+            let breedPage = document.querySelector("#breed-page");
+            breedPage.style.display = "none";
+            indivPage.style.display = "flex";
+
+    }
 
     let imagesDiv = createImagesDiv(); 
     indivPage.appendChild(imagesDiv)
@@ -208,80 +239,51 @@ function renderBreedPage(dataImage) {
 
         let singleImageDiv = createSingleImageDiv(dataImage[j]);
         imagesDiv.appendChild(singleImageDiv);
-
-    }
-
-}
-
-//getting data for the list of breed with sub-breed
-function customSubBreedPage() {
-
-    customUrl = "https://dog.ceo/api/breed/" + currentPage + "/list";
-    getData(customUrl)
-        .then(renderSubBreedList);
+     }
 
 }
+
+
+
 
 //rendering the text area, if there's a sub-breed, then render the option to choose
 
-function renderSubBreedList(dataList) {
+function renderLists(dataList, breedId) {
 
+    let indivPage = document.querySelector(breedId);
+    let lists;
 
-    let subBreedList = dataList;
-    console.log(subBreedList);
+    if(breedId === "#breed-page"){
 
-    let indivPage = document.querySelector("#breed-page");
+        lists = createListDiv(currentPage.toUpperCase());
+        indivPage.appendChild(lists);
 
-    let lists = createListDiv(currentPage.toUpperCase());
-    indivPage.appendChild(lists);
+        if (dataList.length > 0) {
+            let labelH3 = document.createElement("h3");
+            labelH3.textContent = "Choose the Sub-Breed";
+            lists.appendChild(labelH3);
 
+            let selectBox = createSelectBar("select-subbreed", dataList, true);
+            lists.appendChild(selectBox);
 
-    if (subBreedList.length > 0) {
-        let labelH3 = document.createElement("h3");
-        labelH3.textContent = "Choose the Sub-Breed";
-        lists.appendChild(labelH3);
+            let submitBtn = createSubmitButton();
+            lists.appendChild(submitBtn);
+            submitBtn.addEventListener("click", mySubmitBtn);
 
-        let selectBox = createSelectBar("select-subbreed", subBreedList, true);
-        lists.appendChild(selectBox);
+        }
 
-        let submitBtn = createSubmitButton();
-        lists.appendChild(submitBtn);
-        submitBtn.addEventListener("click", mySubmitBtn);
+        breedPage = true;
+    }
+
+    if (breedId === "#subbreed-page"){
+        lists = createListDiv(currentPage.toUpperCase()+" - "+currentSubBreedPage.toUpperCase());
+        indivPage.appendChild(lists);
 
     }
 
     let refreshBtn = createRefreshButton();
     lists.appendChild(refreshBtn);
     refreshBtn.addEventListener("click", refreshPage);
-
-    breedPage = true;
-}
-
-// render the sub-breed page(images & text)
-
-function renderSubBreedPage(dataImage) {
-
-    let breedPage = document.querySelector("#breed-page");
-    breedPage.style.display = "none";
-    let subBreedPage = document.querySelector("#subbreed-page");
-    subBreedPage.style.display = "flex";
-
-    let images = createImagesDiv();
-    subBreedPage.appendChild(images);
-
-    let lists = createListDiv(currentPage.toUpperCase()+" - "+currentSubBreedPage.toUpperCase());
-    subBreedPage.appendChild(lists);
-
-    for (let j = 0; j < dataImage.length; j++) {
-
-        let singleImageDiv = createSingleImageDiv(dataImage[j]);
-        images.appendChild(singleImageDiv);
-    }
-
-    let refreshBtn = createRefreshButton();
-    lists.appendChild(refreshBtn);
-    refreshBtn.addEventListener("click", refreshPage);
-
 }
 
 // to refresh the page
@@ -317,7 +319,7 @@ function catchBreedName(wholeData) {
     if (breedPage === false) {
 
         // console.log(wholeData.bulldog)
-
+        
         for (let eachDog in wholeData) {
 
             // console.log(typeof eachDog)
@@ -327,8 +329,10 @@ function catchBreedName(wholeData) {
                 for (let l = 0; l < wholeData[eachDog].length; l++) {
                     if (wholeData[eachDog][l] === currentPage) {
                         console.log("theres a match!")
+                        
                         currentSubBreedPage = currentPage;
-                        currentPage = eachDog;
+                        console.log(currentSubBreedPage);
+                        currentPage = getBreedName();
                         console.log("user input", currentPage)
                         console.log("user sub input", currentSubBreedPage)
                         breedPage = true;
@@ -357,6 +361,16 @@ function getCurrentPage(currentUrl) {
     }
   };
 
+  function getBreedName(){
+    let currentUrl = window.location.hash; 
+    currentUrlSplit = currentUrl.split("-");
+    let actualBreed = currentUrlSplit[0].substring(1)
+    console.log(currentUrlSplit[0].substring(1));
+    
+    return actualBreed;
+    
+  }
+
 
 function refreshSpecPage() {
     currentPage = window.location.hash;
@@ -364,11 +378,7 @@ function refreshSpecPage() {
     currentPage = getCurrentPage(currentPage);
     console.log(currentPage);
     if (currentPage) {
-
         currentPage = currentPage.substring(1);
-
-        // we are not sure if it is breed or subbreed yet.
-        // make function to check
         grabBreed();
       
     } else {
@@ -378,3 +388,62 @@ function refreshSpecPage() {
 }
 
 refreshSpecPage();
+
+/*
+// rendering breed page (images)
+function renderBreedPageImage(dataImage) {
+
+    const title = document.querySelector("title");
+    title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+
+    startPage.style.display = "none";
+    let indivPage = document.querySelector("#breed-page");
+    indivPage.style.display = "flex";
+
+    let imagesDiv = createImagesDiv(); 
+    indivPage.appendChild(imagesDiv)
+
+    for (let j = 0; j < dataImage.length; j++) {
+
+        let singleImageDiv = createSingleImageDiv(dataImage[j]);
+        imagesDiv.appendChild(singleImageDiv);
+
+    }
+
+}*/
+/*
+//getting data for the list of breed with sub-breed
+function customSubBreedPage() {
+
+    customUrl = "https://dog.ceo/api/breed/" + currentPage + "/list";
+    getData(customUrl)
+        .then(renderBreedPageList);
+
+}*/
+
+// render the sub-breed page(images & text)
+/*
+function renderSubBreedPage(dataImage) {
+
+    let breedPage = document.querySelector("#breed-page");
+    breedPage.style.display = "none";
+    let subBreedPage = document.querySelector("#subbreed-page");
+    subBreedPage.style.display = "flex";
+
+    let images = createImagesDiv();
+    subBreedPage.appendChild(images);
+
+    let lists = createListDiv(currentPage.toUpperCase()+" - "+currentSubBreedPage.toUpperCase());
+    subBreedPage.appendChild(lists);
+
+    for (let j = 0; j < dataImage.length; j++) {
+
+        let singleImageDiv = createSingleImageDiv(dataImage[j]);
+        images.appendChild(singleImageDiv);
+    }
+
+    let refreshBtn = createRefreshButton();
+    lists.appendChild(refreshBtn);
+    refreshBtn.addEventListener("click", refreshPage);
+
+}*/
