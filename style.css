@@ -141,7 +141,7 @@ footer{
 
 .lists h2, .lists h3{
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-family: 'Lato', sans-serif;
     text-transform: uppercase;
     color: darkslategray;
@@ -157,7 +157,7 @@ footer{
 
 
 .submitBtn{
-    margin-top: 10px;
+    margin-top: 15px;
     text-align: center;
     padding: 5px;
     padding-top: 5px;
