@@ -189,7 +189,7 @@ footer{
     margin-right: 0px;
 }
 
-.refreshPage{
+.refreshPage, .backBtn{
     background: transparent;
     border: none;
     color: #fff;
@@ -200,12 +200,17 @@ footer{
     padding: 0;
 }
 
-.refreshPage:hover{
+.backBtn{
+    width: 40px;
+    margin-right: 40px;
+}
+
+.refreshPage:hover, .backBtn:hover{
     cursor: pointer;
     color: bisque;
 }
 
-.material-icons.refresh{
+.material-icons.refresh, .material-icons.back{
     font-size: 30px;
     left: 0px;
 }

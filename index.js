@@ -1,7 +1,6 @@
 // =================
 // GLOBAL VARIABLES 
 
-let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
 
 let currentPage;
@@ -49,7 +48,9 @@ function frontPage() {
 
 // creating different elements for the HTML
 // == REFRESH BUTTON
+
 function createRefreshButton() {
+
     let refreshBtn = document.createElement("button");
     refreshBtn.className = "refreshPage";
     let btnSpan = document.createElement("span");
@@ -61,6 +62,20 @@ function createRefreshButton() {
     btnSpan.textContent = "REFRESH";
 
     return refreshBtn;
+}
+
+function createBackButton(btnClass){
+    let backBtn = document.createElement("button");
+    backBtn.className = btnClass;
+    let btnSpan = document.createElement("span");
+    let iBack = document.createElement("i");
+    iBack.className = "material-icons back";
+    iBack.textContent = "arrow_back";
+    backBtn.appendChild(iBack);
+    backBtn.appendChild(btnSpan);
+    btnSpan.textContent = "BACK";
+
+    return backBtn;
 }
 
 // == SUBMIT BUTTON
@@ -115,12 +130,10 @@ function createSelectBar(selectID, data, subBreedFound){
     if (subBreedFound === false){
         for (let eachData in data) {
             select.innerHTML += '<option value="' + eachData + '">' + eachData + '</option>';
-    
         }
     }
    
     if (subBreedFound === true){
-        console.log('test')
         console.log(data)
         for (let k = 0; k < data.length; k++) {
             select.innerHTML += '<option value="' + data[k] + '">' + data[k] + '</option>';
@@ -160,6 +173,7 @@ function renderInfo(datas) {
     let submitBtn = createSubmitButton();
     lists.appendChild(submitBtn);
     submitBtn.addEventListener("click", mySubmitBtn);
+
     let refreshBtn = createRefreshButton();
     lists.appendChild(refreshBtn);
     refreshBtn.addEventListener("click", refreshPage);
@@ -240,18 +254,13 @@ function renderImages(dataImage, breedId){
     title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
 
     if (breedId === "#breed-page"){
-   
             startPage.style.display = "none";
-            //let indivPage = document.querySelector("#breed-page");
-        
     }
 
     if (breedId === "#subbreed-page"){
-
             title.textContent += " - "+ currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
             let breedPage = document.querySelector("#breed-page");
-            breedPage.style.display = "none";
-
+            breedPage.style.display = "none"
     }
 
     let imagesDiv = createImagesDiv(); 
@@ -299,9 +308,38 @@ function renderLists(dataList, breedId) {
 
     }
 
+    let belowButtons = document.createElement("div");
+    belowButtons.className = "below-buttons";
+    lists.appendChild(belowButtons);
+
+    let backBtn = createBackButton("backBtn");
+    belowButtons.appendChild(backBtn);
+    backBtn.addEventListener("click", () => {
+        goBackPage()
+    })
+
     let refreshBtn = createRefreshButton();
-    lists.appendChild(refreshBtn);
+    belowButtons.appendChild(refreshBtn);
     refreshBtn.addEventListener("click", refreshPage);
+}
+
+// Function to go back to the previous level 
+
+function goBackPage(){
+    currentPage = window.location.hash;
+    let currentUrlSplit = currentPage.split("-");
+    console.log(currentUrlSplit);
+    // if it's a sub-breed
+    if (currentUrlSplit.length > 1){
+        currentPage = currentUrlSplit[0].substring(1); 
+        console.log(currentPage);
+        breedPage = false;
+        window.location.hash = currentPage;
+        customDogPage();
+    }else { // if it's a breed
+        frontPage(); 
+        window.location = "";
+    }
 }
 
 // Function to refresh the current active page
@@ -312,16 +350,16 @@ function refreshPage() {
 }
 
 // Function to get the current breed & sub-breed name
-function getBreedNames(){
-    let currentUrl = window.location.hash; 
-    currentUrlSplit = currentUrl.split("-");
+function getBreedNames(currentUrl){
+    let currentUrlSplit = currentUrl.split("-");
     //console.log(currentUrlSplit);
+    // if it's a sub-breed
     if (currentUrlSplit.length > 1){
-        currentPage= currentUrlSplit[0].substring(1);
+        currentPage= currentUrlSplit[0]; 
         currentSubBreedPage = currentUrlSplit[1];
         breedPage = true;
-    }else {
-        currentPage= currentUrlSplit[0].substring(1);
+    }else { // if it's a breed
+        currentPage= currentUrlSplit[0]; 
     }
     //console.log(currentUrlSplit[0].substring(1));
 }
@@ -330,18 +368,14 @@ function getBreedNames(){
 function refreshSpecPage() {
     currentPage = window.location.hash;
     console.log(currentPage);
-
-    console.log(currentPage);
     if (currentPage) {
         currentPage = currentPage.substring(1);
-    
-        getBreedNames();
+        getBreedNames(currentPage);
+        reloadPageWithHash() 
         customDogPage();
-      
     } else {
         frontPage();
     }
-
 }
 
 refreshSpecPage();
