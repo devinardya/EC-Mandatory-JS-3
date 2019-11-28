@@ -80,7 +80,6 @@ section{
     display: flex;
     flex-flow: row wrap;
     align-content: center;
-    flex-shrink: 1;
 }
 
 .image:first-child{

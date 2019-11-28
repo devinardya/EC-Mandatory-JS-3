@@ -1,6 +1,7 @@
 // =================
 // GLOBAL VARIABLES 
 
+let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
 
 let currentPage;
@@ -203,13 +204,13 @@ function chooseBreed() {
         let subSelect = document.querySelector("#select-subbreed");
         currentSubBreedPage = subSelect.value;
         console.log(currentSubBreedPage);
-        console.log(userInput);
     }
 }
 
 // function for getting the Selector value
 // of both breed and sub-breed selection
 function customDogPage() {
+    
     if (breedPage === false) {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/images/random/3";
         getData(customUrl)
@@ -249,11 +250,15 @@ function reloadPageWithHash() {
 function renderImages(dataImage, breedId){
     
     let indivPage = document.querySelector(breedId);
+  
     indivPage.style.display = "flex";
     const title = document.querySelector("title");
     title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
 
     if (breedId === "#breed-page"){
+        let subbreedPage = document.querySelector("#subbreed-page");
+            subbreedPage.innerHTML = ""
+            subbreedPage.style.display = "none";
             startPage.style.display = "none";
     }
 
@@ -261,6 +266,7 @@ function renderImages(dataImage, breedId){
             title.textContent += " - "+ currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
             let breedPage = document.querySelector("#breed-page");
             breedPage.style.display = "none"
+            breedPage.innerHTML = ""
     }
 
     let imagesDiv = createImagesDiv(); 
