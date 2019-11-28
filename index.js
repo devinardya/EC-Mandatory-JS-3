@@ -37,8 +37,8 @@ function frontPage() {
         .then(renderImage)
         .then(() => {
             getData(urlList)
-            //.then(renderInfo)
-            .then(data => renderInfo(data));
+                //.then(renderInfo)
+                .then(data => renderInfo(data));
         })
 
     startPage.style.display = "flex";
@@ -65,7 +65,7 @@ function createRefreshButton() {
     return refreshBtn;
 }
 
-function createBackButton(btnClass){
+function createBackButton(btnClass) {
     let backBtn = document.createElement("button");
     backBtn.className = btnClass;
     let btnSpan = document.createElement("span");
@@ -101,7 +101,7 @@ function createImagesDiv() {
 }
 
 // == DIV CLASS IMAGE
-function createSingleImageDiv(imageSource){
+function createSingleImageDiv(imageSource) {
     let singleImageDiv = document.createElement("div");
     let eachImg = document.createElement("img");
     singleImageDiv.className = "image";
@@ -123,18 +123,18 @@ function createListDiv(h2Label) {
 }
 
 // SELECT BAR
-function createSelectBar(selectID, data, subBreedFound){
+function createSelectBar(selectID, data, subBreedFound) {
 
     let select = document.createElement("select");
     select.id = selectID;
 
-    if (subBreedFound === false){
+    if (subBreedFound === false) {
         for (let eachData in data) {
             select.innerHTML += '<option value="' + eachData + '">' + eachData + '</option>';
         }
     }
-   
-    if (subBreedFound === true){
+
+    if (subBreedFound === true) {
         console.log(data)
         for (let k = 0; k < data.length; k++) {
             select.innerHTML += '<option value="' + data[k] + '">' + data[k] + '</option>';
@@ -155,7 +155,6 @@ function renderImage(data) {
     startPage.appendChild(images);
 
     for (let i = 0; i < coverImages; i++) {
-
         let singleImageDiv = createSingleImageDiv(data[i]);
         images.appendChild(singleImageDiv);
     }
@@ -210,7 +209,7 @@ function chooseBreed() {
 // function for getting the Selector value
 // of both breed and sub-breed selection
 function customDogPage() {
-    
+
     if (breedPage === false) {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/images/random/3";
         getData(customUrl)
@@ -241,42 +240,42 @@ function reloadPageWithHash() {
     }
     //sub-breed page
     if (breedPage === true) {
-        window.location.hash = currentPage+"-"+currentSubBreedPage;
+        window.location.hash = currentPage + "-" + currentSubBreedPage;
     }
 
 }
 
 // Rendering the "images" class on DOM
-function renderImages(dataImage, breedId){
-    
+function renderImages(dataImage, breedId) {
+
     let indivPage = document.querySelector(breedId);
-  
+
     indivPage.style.display = "flex";
     const title = document.querySelector("title");
     title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
 
-    if (breedId === "#breed-page"){
+    if (breedId === "#breed-page") {
         let subbreedPage = document.querySelector("#subbreed-page");
-            subbreedPage.innerHTML = ""
-            subbreedPage.style.display = "none";
-            startPage.style.display = "none";
+        subbreedPage.innerHTML = "";
+        subbreedPage.style.display = "none";
+        startPage.style.display = "none";
     }
 
-    if (breedId === "#subbreed-page"){
-            title.textContent += " - "+ currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
-            let breedPage = document.querySelector("#breed-page");
-            breedPage.style.display = "none"
-            breedPage.innerHTML = ""
+    if (breedId === "#subbreed-page") {
+        title.textContent += " - " + currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
+        let breedPage = document.querySelector("#breed-page");
+        breedPage.style.display = "none";
+        breedPage.innerHTML = "";
     }
 
-    let imagesDiv = createImagesDiv(); 
+    let imagesDiv = createImagesDiv();
     indivPage.appendChild(imagesDiv)
 
     for (let j = 0; j < dataImage.length; j++) {
 
         let singleImageDiv = createSingleImageDiv(dataImage[j]);
         imagesDiv.appendChild(singleImageDiv);
-     }
+    }
 
 }
 
@@ -286,7 +285,7 @@ function renderLists(dataList, breedId) {
     let indivPage = document.querySelector(breedId);
     let lists;
 
-    if(breedId === "#breed-page"){
+    if (breedId === "#breed-page") {
 
         lists = createListDiv(currentPage.toUpperCase());
         indivPage.appendChild(lists);
@@ -308,8 +307,8 @@ function renderLists(dataList, breedId) {
         breedPage = true;
     }
 
-    if (breedId === "#subbreed-page"){
-        lists = createListDiv(currentPage.toUpperCase()+" - "+currentSubBreedPage.toUpperCase());
+    if (breedId === "#subbreed-page") {
+        lists = createListDiv(currentPage.toUpperCase() + " - " + currentSubBreedPage.toUpperCase());
         indivPage.appendChild(lists);
 
     }
@@ -331,19 +330,19 @@ function renderLists(dataList, breedId) {
 
 // Function to go back to the previous level 
 
-function goBackPage(){
+function goBackPage() {
     currentPage = window.location.hash;
     let currentUrlSplit = currentPage.split("-");
     console.log(currentUrlSplit);
     // if it's a sub-breed
-    if (currentUrlSplit.length > 1){
-        currentPage = currentUrlSplit[0].substring(1); 
+    if (currentUrlSplit.length > 1) {
+        currentPage = currentUrlSplit[0].substring(1);
         console.log(currentPage);
         breedPage = false;
         window.location.hash = currentPage;
         customDogPage();
-    }else { // if it's a breed
-        frontPage(); 
+    } else { // if it's a breed
+        frontPage();
         window.location = "";
     }
 }
@@ -356,28 +355,28 @@ function refreshPage() {
 }
 
 // Function to get the current breed & sub-breed name
-function getBreedNames(currentUrl){
+function getBreedNames(currentUrl) {
     let currentUrlSplit = currentUrl.split("-");
     //console.log(currentUrlSplit);
     // if it's a sub-breed
-    if (currentUrlSplit.length > 1){
-        currentPage= currentUrlSplit[0]; 
+    if (currentUrlSplit.length > 1) {
+        currentPage = currentUrlSplit[0];
         currentSubBreedPage = currentUrlSplit[1];
         breedPage = true;
-    }else { // if it's a breed
-        currentPage= currentUrlSplit[0]; 
+    } else { // if it's a breed
+        currentPage = currentUrlSplit[0];
     }
     //console.log(currentUrlSplit[0].substring(1));
 }
 
-// Function to get the # for either the breed or sub-breed page
+// Function to render which page that is active based on the page url
 function refreshSpecPage() {
     currentPage = window.location.hash;
     console.log(currentPage);
     if (currentPage) {
         currentPage = currentPage.substring(1);
         getBreedNames(currentPage);
-        reloadPageWithHash() 
+        reloadPageWithHash()
         customDogPage();
     } else {
         frontPage();
