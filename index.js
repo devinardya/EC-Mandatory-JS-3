@@ -22,34 +22,6 @@ let customUrl;
 
 // =================
 // API functions
-
-
-function wait(data){
-    return new Promise((resolve, reject) =>{
-      resolve(
-        setTimeout(() => {
-          console.log(data);
-            loading.style.display = "none";
-           
-            
-            if ( Array.isArray(data)){
-                renderImage(data)
-                console.log("once?")
-            } 
-           
-            if( Array.isArray(data) === false){
-               renderInfo(data)
-               
-               console.log("twice?")
-            }
-        
-        }, 1000)
-      )
-    })
-  
-  }
-
-
 // function to grab the data from Dog API
 function getData(url) {
     return axios.get(url)
@@ -64,26 +36,13 @@ function getData(url) {
 function frontPage() {
     startPage.style.display = "flex";
     getData(urlImg)
-        .then((value) =>{
-            //console.log(value);
-            result = value;
-            loading.style.display = "block";
-        })
-        .then(() =>{
-            wait(result);
-        })
-       // .then(renderImage)
+        .then(renderImage)
         .then(() => {
             getData(urlList)
-                .then((data)=>{
-                   // console.log(data)
-                    listData = data;
-                })
+        
                 //.then(renderInfo)
-                //.then(data => renderInfo(data));
-                .then(() =>{
-                    wait(listData);
-                })
+                .then(data => renderInfo(data));
+                
         })
         .catch(() =>{
             let alert = document.querySelector("#alert");
@@ -260,18 +219,48 @@ function chooseBreed() {
 
 // function for getting the Selector value
 // of both breed and sub-breed selection
+
+function waitLoading(page){
+    return new Promise((resolve, reject) =>{
+        resolve(
+          setTimeout(() => {
+           // console.log(data);
+              loading.style.display = "none";
+              renderImages(result, page);
+              renderLists(listData, page);
+             
+          }, 750)
+        )
+      })
+}
+
 function customDogPage() {
 
     if (breedPage === false) {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/images/random/3";
         getData(customUrl)
-            //.then(renderBreedPageImage) 
-            .then(data => renderImages(data, "#breed-page"))
-            //.then(customSubBreedPage);
+            .then((value) =>{
+                //console.log(value);
+                result = value;
+                startPage.style.display = "none";
+                loading.style.display = "block";
+                document.querySelector("#subbreed-page").style.display = "none";
+            })
             .then(() => {
                 customUrl = "https://dog.ceo/api/breed/" + currentPage + "/list";
                 getData(customUrl)
-                    .then(data => renderLists(data, "#breed-page"));
+                   // .then(data => waitLoading(data, "#breed-page"));
+                   .then((data) =>{
+                       listData = data;
+                   })
+                   .then(() =>{
+                       waitLoading("#breed-page")
+                   })
+            })
+            .catch(() =>{
+                let alert = document.querySelector("#alert");
+                alert.style.display = "block";
+                
             })
             
     }
@@ -280,8 +269,27 @@ function customDogPage() {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/" + currentSubBreedPage + "/images/random/3";
         getData(customUrl)
             //.then(renderSubBreedPage);
+
+            .then((value) =>{
+                //console.log(value);
+                result = value;
+                startPage.style.display = "none";
+                document.querySelector("#breed-page").style.display = "none";
+                document.querySelector("#subbreed-page").style.display = "none";
+                loading.style.display = "block";
+            })
+            .then(() =>{
+                //waitLoading(result, "#subbreed-page");
+                waitLoading("#subbreed-page");
+            })
+            /*
             .then(data => renderImages(data, "#subbreed-page"))
-            .then(data => renderLists(data, "#subbreed-page"))
+            .then(data => renderLists(data, "#subbreed-page"))*/
+            .catch(() =>{
+                let alert = document.querySelector("#alert");
+                alert.style.display = "block";
+                
+            })
     }
 }
 

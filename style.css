@@ -68,6 +68,13 @@ section{
     display: none;
 }
 
+#loading{
+    height: 100vh;
+    width: 100vw;
+    background: rgb(255,228,196);
+    background: linear-gradient(180deg, rgba(255,228,196,1) 0%, rgba(255,228,196,1) 18%, rgba(255,255,255,1) 18%, rgba(255,255,255,1) 18.7%, rgba(95,158,160,1) 18.7%, rgba(95,158,160,1) 100%);
+}
+
 .container-box h2{
     color: #fff;
     font-size: 25px;
