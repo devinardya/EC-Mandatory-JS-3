@@ -3,6 +3,7 @@
 
 let submitBtn = document.querySelector(".submitBtn");
 let startPage = document.querySelector("#startpage");
+let loading = document.querySelector("#loading");
 
 let currentPage;
 let currentSubBreedPage;
@@ -11,6 +12,8 @@ let dataInfo;
 let coverImages = 5;
 let breedPage = false;
 let subBreedFound = true;
+let result;
+let listData;
 
 let urlImg = "https://dog.ceo/api/breeds/image/random/" + coverImages;
 let urlList = "https://dog.ceo/api/breeds/list/all";
@@ -19,6 +22,32 @@ let customUrl;
 
 // =================
 // API functions
+
+
+function wait(data){
+    return new Promise((resolve, reject) =>{
+      resolve(
+        setTimeout(() => {
+          console.log(data);
+            loading.style.display = "none";
+           
+            
+            if ( Array.isArray(data)){
+                renderImage(data)
+                console.log("once?")
+            } 
+           
+            if( Array.isArray(data) === false){
+               renderInfo(data)
+               
+               console.log("twice?")
+            }
+        
+        }, 1000)
+      )
+    })
+  
+  }
 
 
 // function to grab the data from Dog API
@@ -33,15 +62,36 @@ function getData(url) {
 
 // callback to get the functions works in order
 function frontPage() {
+    startPage.style.display = "flex";
     getData(urlImg)
-        .then(renderImage)
+        .then((value) =>{
+            //console.log(value);
+            result = value;
+            loading.style.display = "block";
+        })
+        .then(() =>{
+            wait(result);
+        })
+       // .then(renderImage)
         .then(() => {
             getData(urlList)
+                .then((data)=>{
+                   // console.log(data)
+                    listData = data;
+                })
                 //.then(renderInfo)
-                .then(data => renderInfo(data));
+                //.then(data => renderInfo(data));
+                .then(() =>{
+                    wait(listData);
+                })
+        })
+        .catch(() =>{
+            let alert = document.querySelector("#alert");
+            alert.style.display = "block";
+            
         })
 
-    startPage.style.display = "flex";
+   
 }
 
 // =================
@@ -65,9 +115,10 @@ function createRefreshButton() {
     return refreshBtn;
 }
 
-function createBackButton(btnClass) {
+//== BACK BUTTON
+function createBackButton() {
     let backBtn = document.createElement("button");
-    backBtn.className = btnClass;
+    backBtn.className = "backBtn";
     let btnSpan = document.createElement("span");
     let iBack = document.createElement("i");
     iBack.className = "material-icons back";
@@ -163,6 +214,7 @@ function renderImage(data) {
 
 // rendering front page's text
 function renderInfo(datas) {
+    console.log(datas);
 
     let lists = createListDiv("Select a breed!");
     startPage.appendChild(lists);
@@ -221,6 +273,7 @@ function customDogPage() {
                 getData(customUrl)
                     .then(data => renderLists(data, "#breed-page"));
             })
+            
     }
     if (breedPage === true) {
 
@@ -317,11 +370,9 @@ function renderLists(dataList, breedId) {
     belowButtons.className = "below-buttons";
     lists.appendChild(belowButtons);
 
-    let backBtn = createBackButton("backBtn");
+    let backBtn = createBackButton();
     belowButtons.appendChild(backBtn);
-    backBtn.addEventListener("click", () => {
-        goBackPage()
-    })
+    backBtn.addEventListener("click", goBackPage);
 
     let refreshBtn = createRefreshButton();
     belowButtons.appendChild(refreshBtn);
