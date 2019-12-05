@@ -222,15 +222,13 @@ function chooseBreed() {
 
 function waitLoading(page){
     return new Promise((resolve, reject) =>{
-        resolve(
+       
           setTimeout(() => {
            // console.log(data);
-              loading.style.display = "none";
-              renderImages(result, page);
-              renderLists(listData, page);
+              
+              resolve(page)
              
-          }, 750)
-        )
+          }, 500)
       })
 }
 
@@ -254,7 +252,13 @@ function customDogPage() {
                        listData = data;
                    })
                    .then(() =>{
-                       waitLoading("#breed-page")
+                       return waitLoading("#breed-page")
+                   })
+                   .then (data =>{
+                    console.log(data);
+                    loading.style.display = "none";
+                    renderImages(result, data);
+                    renderLists(listData, data);
                    })
             })
             .catch(() =>{
@@ -280,7 +284,13 @@ function customDogPage() {
             })
             .then(() =>{
                 //waitLoading(result, "#subbreed-page");
-                waitLoading("#subbreed-page");
+                return waitLoading("#subbreed-page");
+            })
+            .then (data => {
+                console.log(data);
+                loading.style.display = "none";
+                renderImages(result, data);
+                renderLists(listData, data);
             })
             /*
             .then(data => renderImages(data, "#subbreed-page"))
