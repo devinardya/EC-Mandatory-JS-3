@@ -12,12 +12,11 @@ let dataInfo;
 let coverImages = 5;
 let breedPage = false;
 let subBreedFound = true;
-let result;
-let listData;
 
 let urlImg = "https://dog.ceo/api/breeds/image/random/" + coverImages;
 let urlList = "https://dog.ceo/api/breeds/list/all";
 let customUrl;
+
 
 
 // =================
@@ -32,26 +31,6 @@ function getData(url) {
         })
 }
 
-// callback to get the functions works in order
-function frontPage() {
-    startPage.style.display = "flex";
-    getData(urlImg)
-        .then(renderImage)
-        .then(() => {
-            getData(urlList)
-        
-                //.then(renderInfo)
-                .then(data => renderInfo(data));
-                
-        })
-        .catch(() =>{
-            let alert = document.querySelector("#alert");
-            alert.style.display = "block";
-            
-        })
-
-   
-}
 
 // =================
 // DOM elements
@@ -155,42 +134,6 @@ function createSelectBar(selectID, data, subBreedFound) {
 
 }
 
-// =================
-// RENDERING DATA
-
-// rendering front page's images
-function renderImage(data) {
-
-    let images = createImagesDiv();
-    startPage.appendChild(images);
-
-    for (let i = 0; i < coverImages; i++) {
-        let singleImageDiv = createSingleImageDiv(data[i]);
-        images.appendChild(singleImageDiv);
-    }
-
-}
-
-// rendering front page's text
-function renderInfo(datas) {
-    console.log(datas);
-
-    let lists = createListDiv("Select a breed!");
-    startPage.appendChild(lists);
-
-    let select = createSelectBar("select", datas, false);
-    lists.appendChild(select);
-
-    let submitBtn = createSubmitButton();
-    lists.appendChild(submitBtn);
-    submitBtn.addEventListener("click", mySubmitBtn);
-
-    let refreshBtn = createRefreshButton();
-    lists.appendChild(refreshBtn);
-    refreshBtn.addEventListener("click", refreshPage);
-
-}
-
 // function to keep track on the order of function to do after the submit button is clicked
 function mySubmitBtn() {
     chooseBreed();
@@ -217,19 +160,41 @@ function chooseBreed() {
     }
 }
 
-// function for getting the Selector value
-// of both breed and sub-breed selection
-
-function waitLoading(page){
+// function to do a "loading" pause between pages
+function waitLoading(data){
     return new Promise((resolve, reject) =>{
        
           setTimeout(() => {
            // console.log(data);
-              
-              resolve(page)
-             
-          }, 500)
+              resolve(data)
+          }, 300)
       })
+}
+
+// function for getting the Selector value
+// of both breed and sub-breed selection
+
+// callback to get the functions works in order
+function frontPage() {
+    startPage.style.display = "flex";
+    getData(urlImg)
+        .then((data =>{
+            renderImages(data, "#startpage");
+        }))
+        .then(() => {
+            getData(urlList)
+        
+                //.then(renderInfo)
+                .then((data => {
+                    renderLists(data, "#startpage");
+                }))
+        })
+        
+        .catch(() =>{
+            let alert = document.querySelector("#alert");
+            alert.style.display = "block";
+            
+        })
 }
 
 function customDogPage() {
@@ -239,26 +204,25 @@ function customDogPage() {
         getData(customUrl)
             .then((value) =>{
                 //console.log(value);
-                result = value;
                 startPage.style.display = "none";
                 loading.style.display = "block";
                 document.querySelector("#subbreed-page").style.display = "none";
+                return value;
+            })
+            .then((data) =>{
+                console.log(data)
+                return waitLoading(data)
+            })
+            .then (data =>{
+             console.log(data);
+             loading.style.display = "none";
+             renderImages(data, "#breed-page");
             })
             .then(() => {
                 customUrl = "https://dog.ceo/api/breed/" + currentPage + "/list";
                 getData(customUrl)
-                   // .then(data => waitLoading(data, "#breed-page"));
                    .then((data) =>{
-                       listData = data;
-                   })
-                   .then(() =>{
-                       return waitLoading("#breed-page")
-                   })
-                   .then (data =>{
-                    console.log(data);
-                    loading.style.display = "none";
-                    renderImages(result, data);
-                    renderLists(listData, data);
+                     renderLists(data, "#breed-page");
                    })
             })
             .catch(() =>{
@@ -276,32 +240,30 @@ function customDogPage() {
 
             .then((value) =>{
                 //console.log(value);
-                result = value;
                 startPage.style.display = "none";
                 document.querySelector("#breed-page").style.display = "none";
                 document.querySelector("#subbreed-page").style.display = "none";
                 loading.style.display = "block";
+                return value;
             })
-            .then(() =>{
-                //waitLoading(result, "#subbreed-page");
-                return waitLoading("#subbreed-page");
+            .then((data) =>{
+                console.log(data);
+                return waitLoading(data);
             })
             .then (data => {
                 console.log(data);
                 loading.style.display = "none";
-                renderImages(result, data);
-                renderLists(listData, data);
+                renderImages(data,"#subbreed-page" );
+                renderLists(data, "#subbreed-page");
             })
-            /*
-            .then(data => renderImages(data, "#subbreed-page"))
-            .then(data => renderLists(data, "#subbreed-page"))*/
+           
             .catch(() =>{
                 let alert = document.querySelector("#alert");
                 alert.style.display = "block";
-                
             })
     }
 }
+
 
 // Assigning URL for the breed page and sub-breed page
 function reloadPageWithHash() {
@@ -316,17 +278,25 @@ function reloadPageWithHash() {
 
 }
 
-// Rendering the "images" class on DOM
+// =================
+// RENDERING DATA
+
+// Rendering the "images" class to DOM
 function renderImages(dataImage, breedId) {
 
     let indivPage = document.querySelector(breedId);
-
+    let subbreedPage = document.querySelector("#subbreed-page");
+    let breedPage = document.querySelector("#breed-page");
     indivPage.style.display = "flex";
     const title = document.querySelector("title");
     title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
 
+    if (breedId === "#startpage"){
+        subbreedPage.style.display = "none";
+        breedPage.style.display = "none";
+    }
+
     if (breedId === "#breed-page") {
-        let subbreedPage = document.querySelector("#subbreed-page");
         subbreedPage.innerHTML = "";
         subbreedPage.style.display = "none";
         startPage.style.display = "none";
@@ -334,7 +304,6 @@ function renderImages(dataImage, breedId) {
 
     if (breedId === "#subbreed-page") {
         title.textContent += " - " + currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
-        let breedPage = document.querySelector("#breed-page");
         breedPage.style.display = "none";
         breedPage.innerHTML = "";
     }
@@ -355,6 +324,19 @@ function renderLists(dataList, breedId) {
 
     let indivPage = document.querySelector(breedId);
     let lists;
+
+    if (breedId === "#startpage"){
+
+        lists = createListDiv("Select a breed!");
+        indivPage.appendChild(lists);
+
+        let select = createSelectBar("select", dataList, false);
+        lists.appendChild(select);
+
+        let submitBtn = createSubmitButton();
+        lists.appendChild(submitBtn);
+        submitBtn.addEventListener("click", mySubmitBtn);
+    }
 
     if (breedId === "#breed-page") {
 
@@ -384,13 +366,16 @@ function renderLists(dataList, breedId) {
 
     }
 
+  
     let belowButtons = document.createElement("div");
     belowButtons.className = "below-buttons";
     lists.appendChild(belowButtons);
 
-    let backBtn = createBackButton();
-    belowButtons.appendChild(backBtn);
-    backBtn.addEventListener("click", goBackPage);
+    if (breedId === "#breed-page" || breedId === "#subbreed-page"){
+        let backBtn = createBackButton();
+        belowButtons.appendChild(backBtn);
+        backBtn.addEventListener("click", goBackPage);
+    }
 
     let refreshBtn = createRefreshButton();
     belowButtons.appendChild(refreshBtn);
@@ -411,7 +396,7 @@ function goBackPage() {
         window.location.hash = currentPage;
         customDogPage();
     } else { // if it's a breed
-        frontPage();
+        //frontPage();
         window.location = "";
     }
 }
@@ -426,15 +411,18 @@ function refreshPage() {
 // Function to get the current breed & sub-breed name
 function getBreedNames(currentUrl) {
     let currentUrlSplit = currentUrl.split("-");
+    let id;
     //console.log(currentUrlSplit);
     // if it's a sub-breed
     if (currentUrlSplit.length > 1) {
         currentPage = currentUrlSplit[0];
         currentSubBreedPage = currentUrlSplit[1];
         breedPage = true;
+
     } else { // if it's a breed
         currentPage = currentUrlSplit[0];
     }
+
     //console.log(currentUrlSplit[0].substring(1));
 }
 
