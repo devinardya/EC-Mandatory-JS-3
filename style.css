@@ -62,6 +62,7 @@ section{
     top: 29%;
     left: 50%;
     transform: translate(-50%, 0);
+    box-shadow: 0px 10px 13px -7px #707070, 0px 0px 15px 3px rgba(84,84,84,0);
 }
 
 #alert, #loading{
