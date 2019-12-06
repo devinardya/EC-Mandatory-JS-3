@@ -96,10 +96,6 @@ section{
     background: linear-gradient(180deg, rgba(255,228,196,1) 0%, rgba(255,228,196,1) 24%, rgba(255,255,255,1) 24%, rgba(255,255,255,1) 25%, rgba(95,158,160,1) 25%, rgba(95,158,160,1) 100%);
 }
 
-#breed-page, #subbreed-page{
-    display: none;
-}
-
 .images{
     width: 90%;
     height: 50%;
