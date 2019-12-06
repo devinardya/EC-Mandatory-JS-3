@@ -3,7 +3,6 @@
 
 let currentPage;
 let currentSubBreedPage;
-let coverImages = 5;
 let breedPage = false;
 let subBreedFound = true;
 
@@ -132,10 +131,11 @@ function renderImages(dataImage, breedId) {
     let breedPage = document.querySelector("#breed-page");
     indivPage.style.display = "flex";
     const title = document.querySelector("title");
-    title.textContent = "World of Dogs - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+    
 
     if (breedId === "#breed-page") {
         breedPage.innerHTML = "";
+        title.textContent += " - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
     }
 
     if (breedId === "#subbreed-page") {
@@ -223,28 +223,33 @@ function renderLists(dataList, breedId) {
 
 // function to keep track on the order of function to do after the submit button is clicked
 function mySubmitBtn(id) {
-    chooseBreed(id);
-    customDogPage(id);
-    reloadPageWithHash();
+    chooseBreed(id)
+    .then(() =>{
+        customDogPage(id);
+    })
+    .then(reloadPageWithHash)
 }
 
 // function for getting the Selector value
 // of both breed and sub-breed selection
 function chooseBreed(ids) {
-
+    return new Promise((resolve, reject) => {
     // first selection, do the breed list
-    if (ids === "#breed-page") {
-        let select = document.querySelector('#select');
-        currentPage = select.value;
-        console.log(currentPage);
-    }
+        if (ids === "#breed-page") {
+            let select = document.querySelector('#select');
+            currentPage = select.value;
+            console.log(currentPage);
+            resolve(currentPage);
+        }
 
-    // second selection, do the sub-breed list
-    if (ids === "#subbreed-page") {
-        let subSelect = document.querySelector("#select-subbreed");
-        currentSubBreedPage = subSelect.value;
-        console.log(currentSubBreedPage);
-    }
+        // second selection, do the sub-breed list
+        if (ids === "#subbreed-page") {
+            let subSelect = document.querySelector("#select-subbreed");
+            currentSubBreedPage = subSelect.value;
+            console.log(currentSubBreedPage);
+            resolve(currentSubBreedPage);
+        }
+    })
 }
 
 // function to do a "loading" pause between pages
@@ -264,6 +269,7 @@ function customDogPage(breedID) {
     let loading = document.querySelector("#loading");
     let customUrl;
     let customListUrl;
+    let coverImages = 5;
 
     if (breedID === "#breed-page") {
         customUrl = "https://dog.ceo/api/breed/" + currentPage + "/images/random/3";
@@ -374,12 +380,12 @@ function getBreedNames(currentUrl) {
 // Function to render which page that is active based on the page url
 function refreshSpecPage() {
     currentPage = window.location.hash;
-    console.log(currentPage);
+    //console.log(currentPage);
     if (currentPage) {
         currentPage = currentPage.substring(1);
         getBreedNames(currentPage);
         reloadPageWithHash()
-        console.log(breedPage);
+        //console.log(breedPage);
         if (breedPage === true) {
             customDogPage("#subbreed-page");
         }
@@ -391,5 +397,4 @@ function refreshSpecPage() {
         customDogPage("#startpage");
     }
 }
-
 refreshSpecPage();
