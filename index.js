@@ -131,7 +131,7 @@ function renderImages(dataImage, breedId) {
     let breedPage = document.querySelector("#breed-page");
     indivPage.style.display = "flex";
     const title = document.querySelector("title");
-    
+    title.textContent = "World of Dogs";
 
     if (breedId === "#breed-page") {
         breedPage.innerHTML = "";
@@ -139,7 +139,7 @@ function renderImages(dataImage, breedId) {
     }
 
     if (breedId === "#subbreed-page") {
-        title.textContent += " - " + currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
+        title.textContent += " - " + currentPage.charAt(0).toUpperCase() + currentPage.slice(1) + " - " + currentSubBreedPage.charAt(0).toUpperCase() + currentSubBreedPage.slice(1);
         subbreedPage.innerHTML = "";
     }
 
